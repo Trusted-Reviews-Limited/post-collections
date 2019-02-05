@@ -271,22 +271,26 @@ class Collection_Widget extends WP_Widget {
 			  placeholder: "Search for an item",
 			  minimumInputLength: 1,
 			  ajax: {
-				url: "/wp-json/wp/v2/posts",
+				url: ajaxurl,
 				dataType: 'json',
 				quietMillis: 250,
 				data: function (term, page) {
 				  return {
+					action: 'post_collection_search',
 					search: term,
+					post_type: 'post',
 				  };
 				},
 				results: function (data, page) {
 				  let myResults = [];
-				  $.each(data, function (index, item) {
-					myResults.push({
-					  'id': item.id,
-					  'text': item.title.rendered
+				  if (data.posts) {
+					$.each(data.posts, function (index, item) {
+					  myResults.push({
+						'id': item.ID,
+						'text': item.post_title
+					  });
 					});
-				  });
+				  }
 				  return {
 					results: myResults
 				  };

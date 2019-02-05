@@ -48,13 +48,13 @@ class Post_Collections {
 
 	function ajax_search() {
 
-		$pto = get_post_type_object( $_POST['post_type'] );
+		$pto = get_post_type_object( $_REQUEST['post_type'] );
 
 		if ( !$pto or !current_user_can( $pto->cap->edit_posts ) )
 			die( '-2');
 
-		$type    = $this->get_supported_post_type( $_POST['post_type'] );
-		$search  = $_POST['search'];
+		$type    = $this->get_supported_post_type( $_REQUEST['post_type'] );
+		$search  = $_REQUEST['search'];
 
 		if ( empty( $type ) )
 			die( '-3' );
