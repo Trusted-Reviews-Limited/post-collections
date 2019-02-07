@@ -164,7 +164,26 @@ class Collection_Widget extends WP_Widget {
 
 		$items                  = explode( ',', $instance['collection_items'] );
 		$context                = Timber::get_context();
-		$context['posts']       = Timber::get_posts( $items );
+		$context['posts']       = [];
+		foreach ( $items as $item ) {
+			if ( substr( $item, 0, 10 ) === 'post_type_' ) {
+				$post = Timber::get_post( substr( $item, 10 ), KeystonePost::class );
+				if ( ! $post instanceof \Timber\Post ) {
+					continue;
+				}
+
+				$context['posts'][] = $post;
+			}
+
+			if ( substr( $item, 0, 9 ) === 'taxonomy_' ) {
+				$term = Timber::get_term( substr( $item, 9 ), null, KeystoneTerm::class );
+				if ( ! $term instanceof \Timber\Term ) {
+					continue;
+				}
+
+				$context['posts'][] = $term;
+			}
+        }
 		$context['image_style'] = $image;
 		$context['instance']    = $instance;
 
@@ -378,12 +397,23 @@ class Collection_Widget extends WP_Widget {
 				if ( ! empty( $instance['collection_items'] ) ) {
 					$items = explode( ',', $instance['collection_items'] );
 					foreach ( $items as $item ) {
-						$post = get_post( $item );
-						if ( ! $post instanceof WP_Post ) {
-							continue;
+						if ( substr( $item, 0, 10 ) === 'post_type_' ) {
+							$post = get_post( substr( $item, 10 ) );
+							if ( ! $post instanceof WP_Post ) {
+								continue;
+							}
+
+							echo "{id:'post_type_" . esc_js( $post->ID ) . "',text:'" . esc_js( get_post_type_object( $post->post_type )->labels->singular_name )  . ': ' . esc_js( $post->post_title ) . "'},";
 						}
 
-						echo '{id:' . esc_js( $post->ID ) . ",text:'" . esc_js( $post->post_title ) . "'},";
+						if ( substr( $item, 0, 9 ) === 'taxonomy_' ) {
+							$term = get_term( substr( $item, 9 ) );
+							if ( ! $term instanceof WP_Term ) {
+								continue;
+							}
+
+							echo "{id:'taxonomy_" . esc_js( $term->term_id ) . "',text:'" . esc_js( get_taxonomy( $term->taxonomy )->labels->singular_name ) . ': ' . esc_js( $term->name ) . "'},";
+						}
 					}
 				}
 				?>
@@ -399,7 +429,7 @@ class Collection_Widget extends WP_Widget {
 				quietMillis: 250,
 				data: function (term, page) {
 				  return {
-					action: 'post_collection_search',
+					action: 'post_collection_search_with_terms',
 					search: term,
 					post_type: 'post',
 				  };
@@ -408,9 +438,10 @@ class Collection_Widget extends WP_Widget {
 				  let myResults = [];
 				  if (data.posts) {
 					$.each(data.posts, function (index, item) {
+					  var prefix = item.type === 'post_type' ? item.post_type : item.taxonomy;
 					  myResults.push({
-						'id': item.ID,
-						'text': item.post_title
+						'id': item.type + '_' + item.ID,
+						'text': prefix + ': ' + item.title
 					  });
 					});
 				  }

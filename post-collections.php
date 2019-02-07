@@ -19,6 +19,7 @@ class Post_Collections {
 		add_action( 'init',                           array( $this, 'init' ), 99 );
 		add_action( 'add_meta_boxes',                 array( $this, 'meta_boxes' ) );
 		add_action( 'wp_ajax_post_collection_search', array( $this, 'ajax_search' ) );
+		add_action( 'wp_ajax_post_collection_search_with_terms', array( $this, 'ajax_search_with_terms' ) );
 		add_action( 'load-post-new.php',              array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post.php',                  array( $this, 'enqueue_assets' ) );
 
@@ -83,6 +84,64 @@ class Post_Collections {
 		}
 
 		wp_send_json( compact( 'posts' )  );
+
+	}
+
+	/*
+	 * Duplicate of function above with added support for searching terms.
+	 */
+	function ajax_search_with_terms() {
+
+		$pto = get_post_type_object( $_REQUEST['post_type'] );
+
+		if ( !$pto or !current_user_can( $pto->cap->edit_posts ) )
+			die( '-2');
+
+		$type    = $this->get_supported_post_type( $_REQUEST['post_type'] );
+		$search  = $_REQUEST['search'];
+
+		if ( empty( $type ) )
+			die( '-3' );
+
+		query_posts( array(
+			'posts_per_page' => 20,
+			'post_status'    => 'publish',
+			'post_type'      => $type['post_types'],
+			's'              => $search,
+		) );
+
+		$results = array();
+
+		while ( have_posts() ) {
+			the_post();
+
+			$results[] = array(
+				'ID'         => get_the_ID(),
+				'title' => get_the_title(),
+				'type'  => 'post_type',
+				'post_type'  => get_post_type_object( get_post_type() )->labels->singular_name,
+			);
+
+		}
+
+		$terms = get_terms( array(
+			'name__like' => $search,
+			'hide_empty' => false,
+		) );
+
+		if ( ! $terms instanceof WP_Error && ! empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$results[] = array(
+					'ID'         => $term->term_id,
+					'title' => $term->name,
+					'type'  => 'taxonomy',
+					'taxonomy' => get_taxonomy( $term->taxonomy )->labels->singular_name,
+				);
+			}
+		}
+
+
+		wp_send_json( compact( 'results' )  );
 
 	}
 
