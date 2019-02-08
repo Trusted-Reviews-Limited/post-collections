@@ -436,8 +436,8 @@ class Collection_Widget extends WP_Widget {
 				},
 				results: function (data, page) {
 				  let myResults = [];
-				  if (data.posts) {
-					$.each(data.posts, function (index, item) {
+				  if (data.results) {
+					$.each(data.results, function (index, item) {
 					  var prefix = item.type === 'post_type' ? item.post_type : item.taxonomy;
 					  myResults.push({
 						'id': item.type + '_' + item.ID,
