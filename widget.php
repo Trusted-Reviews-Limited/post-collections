@@ -183,7 +183,7 @@ class Collection_Widget extends WP_Widget {
 
 				$context['posts'][] = $term;
 			}
-        }
+		}
 		$context['image_style'] = $image;
 		$context['instance']    = $instance;
 
@@ -210,6 +210,16 @@ class Collection_Widget extends WP_Widget {
 		$show_start_time = isset( $instance['show_start_time'] ) ? 'true' : 'false';
 		$show_content_type = isset( $instance['show_content_type'] ) ? 'true' : 'false';
 		$show_taxonomy_signpost = isset( $instance['show_taxonomy_signpost'] ) ? 'true' : 'false';
+		$post_types = get_post_types( [
+			'public'   => true,
+			'_builtin' => true,
+		], 'objects', 'or' );
+		unset( $post_types['attachment'], $post_types['revision'], $post_types['nav_menu_item'], $post_types['custom_css'], $post_types['customize_changeset'], $post_types['oembed_cache'], $post_types['user_request'] );
+		$taxonomies = get_taxonomies( [
+			'public'   => true,
+			'_builtin' => true,
+		], 'objects', 'or' );
+		unset( $taxonomies['nav_menu'], $taxonomies['link_category'], $taxonomies['post_format'] );
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">Title</label>
@@ -222,6 +232,21 @@ class Collection_Widget extends WP_Widget {
 
 		<p>
 			<label>Add an item to this collection:</label>
+			<?php if ( ! empty( $post_types ) || ! empty( $taxonomies ) ) : ?>
+				<br><small>Filter the search input below by specific Post Type or Taxonomy.</small><br>
+				<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'filter' ) ); ?>">
+					<option value=""></option>
+					<?php foreach ( $post_types as $post_type ) : ?>
+						<option value="<?php echo esc_attr( $post_type->name ); ?>">Post Type: <?php echo esc_html( $post_type->label ); ?></option>
+					<?php endforeach; ?>
+					<?php foreach ( $taxonomies as $taxonomy ) : ?>
+						<option value="<?php echo esc_attr( $taxonomy->name ); ?>">Taxonomy: <?php echo esc_html( $taxonomy->labels->singular_name ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			<?php endif; ?>
+		</p>
+		<p>
+
 			<input type="hidden"
 				   class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>"
 				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>">
@@ -431,7 +456,7 @@ class Collection_Widget extends WP_Widget {
 				  return {
 					action: 'post_collection_search_with_terms',
 					search: term,
-					post_type: 'post',
+					filter: $("#<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>").val(),
 				  };
 				},
 				results: function (data, page) {
@@ -455,7 +480,10 @@ class Collection_Widget extends WP_Widget {
 			  initSelection: function (element, callback) {
 				callback(selections);
 			  }
-			}).select2('val', []);
+			}).select2('val', []).on('select2-selecting', function(e) {
+				$("#<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>").prop('selectedIndex',0);
+			});
+
 		  });
 		</script>
 
