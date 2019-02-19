@@ -91,58 +91,55 @@ class Post_Collections {
 	 * Duplicate of function above with added support for searching terms.
 	 */
 	function ajax_search_with_terms() {
-
-		$pto = get_post_type_object( $_REQUEST['post_type'] );
-
-		if ( !$pto or !current_user_can( $pto->cap->edit_posts ) )
-			die( '-2');
-
-		$type    = $this->get_supported_post_type( $_REQUEST['post_type'] );
-		$search  = $_REQUEST['search'];
-
-		if ( empty( $type ) )
-			die( '-3' );
-
-		query_posts( array(
-			'posts_per_page' => 20,
-			'post_status'    => 'publish',
-			'post_type'      => $type['post_types'],
-			's'              => $search,
-		) );
+		$search = sanitize_text_field( $_REQUEST['search'] );
+		$filter = sanitize_text_field( $_REQUEST['filter'] );
 
 		$results = array();
 
-		while ( have_posts() ) {
-			the_post();
+		if ( ! taxonomy_exists( $filter ) ) {
+			query_posts( array(
+				'posts_per_page' => 20,
+				'post_status'    => 'publish',
+				'post_type'      => post_type_exists( $filter ) ? $filter : 'any',
+				's'              => $search,
+			) );
 
-			$results[] = array(
-				'ID'         => get_the_ID(),
-				'title' => get_the_title(),
-				'type'  => 'post_type',
-				'post_type'  => get_post_type_object( get_post_type() )->labels->singular_name,
-			);
 
+			while ( have_posts() ) {
+				the_post();
+
+				$results[] = array(
+					'ID'        => get_the_ID(),
+					'title'     => get_the_title(),
+					'type'      => 'post_type',
+					'post_type' => get_post_type_object( get_post_type() )->labels->singular_name,
+				);
+
+			}
+
+			if ( post_type_exists( $filter ) ) {
+				wp_send_json( compact( 'results' ) );
+			}
 		}
 
 		$terms = get_terms( array(
 			'name__like' => $search,
 			'hide_empty' => false,
+			'taxonomy'   => taxonomy_exists( $filter ) ? $filter : null,
 		) );
 
 		if ( ! $terms instanceof WP_Error && ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
 				$results[] = array(
-					'ID'         => $term->term_id,
-					'title' => $term->name,
-					'type'  => 'taxonomy',
+					'ID'       => $term->term_id,
+					'title'    => $term->name,
+					'type'     => 'taxonomy',
 					'taxonomy' => get_taxonomy( $term->taxonomy )->labels->singular_name,
 				);
 			}
 		}
 
-
-		wp_send_json( compact( 'results' )  );
-
+		wp_send_json( compact( 'results' ) );
 	}
 
 	/**
