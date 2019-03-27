@@ -234,7 +234,7 @@ class Collection_Widget extends WP_Widget {
 			<label>Add an item to this collection:</label>
 			<?php if ( ! empty( $post_types ) || ! empty( $taxonomies ) ) : ?>
 				<br><small>Filter the search input below by specific Post Type or Taxonomy.</small><br>
-				<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'filter' ) ); ?>">
+				<select class="widefat post-collection-filter-by" id="<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'filter' ) ); ?>">
 					<option value=""></option>
 					<?php foreach ( $post_types as $post_type ) : ?>
 						<option value="<?php echo esc_attr( $post_type->name ); ?>">Post Type: <?php echo esc_html( $post_type->label ); ?></option>
@@ -416,75 +416,34 @@ class Collection_Widget extends WP_Widget {
 		</style>
 
 		<script>
-		  jQuery(function ($) {
-			var selections = [
-				<?php
-				if ( ! empty( $instance['collection_items'] ) ) {
-					$items = explode( ',', $instance['collection_items'] );
-					foreach ( $items as $item ) {
-						if ( substr( $item, 0, 10 ) === 'post_type_' ) {
-							$post = get_post( substr( $item, 10 ) );
-							if ( ! $post instanceof WP_Post ) {
-								continue;
+		  	jQuery(function ($) {
+				var selections = [
+					<?php
+						if ( ! empty( $instance['collection_items'] ) ) {
+							$items = explode( ',', $instance['collection_items'] );
+							foreach ( $items as $item ) {
+								if ( substr( $item, 0, 10 ) === 'post_type_' ) {
+									$post = get_post( substr( $item, 10 ) );
+									if ( ! $post instanceof WP_Post ) {
+										continue;
+									}
+
+									echo "{id:'post_type_" . esc_js( $post->ID ) . "',text:'" . esc_js( get_post_type_object( $post->post_type )->labels->singular_name )  . ': ' . esc_js( $post->post_title ) . "'},";
+								}
+
+								if ( substr( $item, 0, 9 ) === 'taxonomy_' ) {
+									$term = get_term( substr( $item, 9 ) );
+									if ( ! $term instanceof WP_Term ) {
+										continue;
+									}
+
+									echo "{id:'taxonomy_" . esc_js( $term->term_id ) . "',text:'" . esc_js( get_taxonomy( $term->taxonomy )->labels->singular_name ) . ': ' . esc_js( $term->name ) . "'},";
+								}
 							}
-
-							echo "{id:'post_type_" . esc_js( $post->ID ) . "',text:'" . esc_js( get_post_type_object( $post->post_type )->labels->singular_name )  . ': ' . esc_js( $post->post_title ) . "'},";
 						}
-
-						if ( substr( $item, 0, 9 ) === 'taxonomy_' ) {
-							$term = get_term( substr( $item, 9 ) );
-							if ( ! $term instanceof WP_Term ) {
-								continue;
-							}
-
-							echo "{id:'taxonomy_" . esc_js( $term->term_id ) . "',text:'" . esc_js( get_taxonomy( $term->taxonomy )->labels->singular_name ) . ': ' . esc_js( $term->name ) . "'},";
-						}
-					}
-				}
-				?>
-			];
-
-			$('.js-post-collection-items-<?php echo esc_attr( $id ); ?>').select2({
-			  multiple: true,
-			  placeholder: "Search for an item",
-			  minimumInputLength: 1,
-			  ajax: {
-				url: ajaxurl,
-				dataType: 'json',
-				quietMillis: 250,
-				data: function (term, page) {
-				  return {
-					action: 'post_collection_search_with_terms',
-					search: term,
-					filter: $("#<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>").val(),
-				  };
-				},
-				results: function (data, page) {
-				  let myResults = [];
-				  if (data.results) {
-					$.each(data.results, function (index, item) {
-					  var prefix = item.type === 'post_type' ? item.post_type : item.taxonomy;
-					  myResults.push({
-						'id': item.type + '_' + item.ID,
-						'text': prefix + ': ' + item.title
-					  });
-					});
-				  }
-				  return {
-					results: myResults
-				  };
-				},
-				cache: true
-			  },
-			  allowClear: true,
-			  initSelection: function (element, callback) {
-				callback(selections);
-			  }
-			}).select2('val', []).on('select2-selecting', function(e) {
-				$("#<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>").prop('selectedIndex',0);
-			});
-
-		  });
+					?>
+				];
+		  	});
 		</script>
 
 		<?php

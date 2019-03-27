@@ -22,6 +22,7 @@ class Post_Collections {
 		add_action( 'wp_ajax_post_collection_search_with_terms', array( $this, 'ajax_search_with_terms' ) );
 		add_action( 'load-post-new.php',              array( $this, 'enqueue_assets' ) );
 		add_action( 'load-post.php',                  array( $this, 'enqueue_assets' ) );
+		add_action( 'admin_enqueue_scripts',		  array( $this, 'admin_enqueue_assets' ) );
 
 		require $this->plugin_path( 'template.php' );
 		require $this->plugin_path( 'widget.php' );
@@ -281,9 +282,9 @@ class Post_Collections {
 
 		wp_enqueue_script(
 			'post-collections',
-			$this->plugin_url( 'post-collections.js' ),
+			$this->plugin_url( 'assets/js/post-collections.js' ),
 			array( 'jquery', 'jquery-ui-sortable' ),
-			$this->plugin_ver( 'post-collections.js' )
+			$this->plugin_ver( 'assets/js/post-collections.js' )
 		);
 
 		wp_localize_script(
@@ -297,9 +298,21 @@ class Post_Collections {
 
 		wp_enqueue_style(
 			'post-collections',
-			$this->plugin_url( 'post-collections.css' ),
+			$this->plugin_url( 'assets/css/post-collections.css' ),
 			null,
-			$this->plugin_ver( 'post-collections.css' )
+			$this->plugin_ver( 'assets/css/post-collections.css' )
+		);
+
+	}
+
+	function admin_enqueue_assets() {
+
+		wp_enqueue_script(
+			'post-collections-admin',
+			$this->plugin_url( 'assets/js/post-collections-admin.js' ),
+			array( 'jquery' ),
+			$this->plugin_ver( 'assets/js/post-collections-admin.js' ),
+			true
 		);
 
 	}
