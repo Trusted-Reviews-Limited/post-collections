@@ -24,31 +24,26 @@ jQuery( function($) {
 						action: 'post_collection_search_with_terms',
 						search: term,
 						filter: $(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).val(),
-					  };
+					};
 				},
 				results: function (data, page) {
-					  let myResults = [];
-					  if (data.results) {
+					let myResults = [];
+					if (data.results) {
 						$.each(data.results, function (index, item) {
-							  var prefix = item.type === 'post_type' ? item.post_type : item.taxonomy;
-							  myResults.push({
+							var prefix = item.type === 'post_type' ? item.post_type : item.taxonomy;
+							myResults.push({
 								'id': item.type + '_' + item.ID,
 								'text': prefix + ': ' + item.title
-							  });
+							});
 						});
-					  }
-					  return {
+					}
+					return {
 						results: myResults
-					  };
+					};
 				},
 				cache: true
-			  },
-			  allowClear: true,
-			  initSelection: function (element, callback) {
-				callback( this.selections );
-			  }
-		}).select2('val', []).on('select2-selecting', function(e) {
-			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
+			},
+			allowClear: true
 		});
 	}
 
