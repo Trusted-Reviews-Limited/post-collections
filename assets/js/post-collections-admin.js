@@ -1,10 +1,10 @@
 jQuery( function($) {
 
-	$( document ).ready( function() {
+	$( 'document' ).ready( function() {
 		initSelect();
 	});
 
-	$( document ).on( 'widget-added', function( event, widget ) {
+	$( 'document' ).on( 'widget-updated widget-added', function( event, widget ) {
 		if( widget.context.outerHTML.indexOf( "collection_widget" ) ) {
 			initSelect();
 		}
@@ -43,7 +43,14 @@ jQuery( function($) {
 				},
 				cache: true
 			},
-			allowClear: true
+			allowClear: true,
+			initSelection: function (element, callback) {
+				if( $(element).data('value').length !== 0 ) {
+					callback( $(element).data('value') );
+				}
+			}
+		}).select2('val', []).on('select2-selecting', function(e) {
+			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
 		});
 	}
 

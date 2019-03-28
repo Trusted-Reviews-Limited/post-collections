@@ -220,6 +220,33 @@ class Collection_Widget extends WP_Widget {
 			'_builtin' => true,
 		], 'objects', 'or' );
 		unset( $taxonomies['nav_menu'], $taxonomies['link_category'], $taxonomies['post_format'] );
+
+		// Set selected items
+		$selected_items = [];
+		if ( ! empty( $instance['collection_items'] ) ) {
+			$items = explode( ',', $instance['collection_items'] );
+			foreach ( $items as $item ) {
+				if ( substr( $item, 0, 10 ) === 'post_type_' ) {
+					$post = get_post( substr( $item, 10 ) );
+					if ( ! $post instanceof WP_Post ) {
+						continue;
+					}
+
+					$selected_items[] = ['id' => 'post_type_' . esc_js( $post->ID ), 'text' => esc_js( get_post_type_object( $post->post_type )->labels->singular_name )  . ': ' . esc_js( $post->post_title ) ];
+				}
+
+				if ( substr( $item, 0, 9 ) === 'taxonomy_' ) {
+					$term = get_term( substr( $item, 9 ) );
+					if ( ! $term instanceof WP_Term ) {
+						continue;
+					}
+
+					$selected_items[] = ['id' => 'taxonomy_' . esc_js( $term->term_id ), 'text' => esc_js( get_taxonomy( $term->taxonomy )->labels->singular_name ) . ': ' . esc_js( $term->name ) ];
+				}
+			}
+		}
+		$selected_items_json = json_encode( $selected_items );
+
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">Title</label>
@@ -249,7 +276,8 @@ class Collection_Widget extends WP_Widget {
 
 			<input type="hidden"
 				   class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>"
-				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>">
+				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>"
+				   data-value="<?php echo esc_attr( $selected_items_json ) ?>">
 		</p>
 
 		<?php if ( ! empty( self::LAYOUT_OPTIONS ) ) : ?>
@@ -414,37 +442,6 @@ class Collection_Widget extends WP_Widget {
 				width: 100%;
 			}
 		</style>
-
-		<script>
-		  	jQuery(function ($) {
-				var selections = [
-					<?php
-						if ( ! empty( $instance['collection_items'] ) ) {
-							$items = explode( ',', $instance['collection_items'] );
-							foreach ( $items as $item ) {
-								if ( substr( $item, 0, 10 ) === 'post_type_' ) {
-									$post = get_post( substr( $item, 10 ) );
-									if ( ! $post instanceof WP_Post ) {
-										continue;
-									}
-
-									echo "{id:'post_type_" . esc_js( $post->ID ) . "',text:'" . esc_js( get_post_type_object( $post->post_type )->labels->singular_name )  . ': ' . esc_js( $post->post_title ) . "'},";
-								}
-
-								if ( substr( $item, 0, 9 ) === 'taxonomy_' ) {
-									$term = get_term( substr( $item, 9 ) );
-									if ( ! $term instanceof WP_Term ) {
-										continue;
-									}
-
-									echo "{id:'taxonomy_" . esc_js( $term->term_id ) . "',text:'" . esc_js( get_taxonomy( $term->taxonomy )->labels->singular_name ) . ': ' . esc_js( $term->name ) . "'},";
-								}
-							}
-						}
-					?>
-				];
-		  	});
-		</script>
 
 		<?php
 	}

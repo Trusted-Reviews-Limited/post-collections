@@ -16,13 +16,13 @@ class Post_Collections {
 	function __construct() {
 
 		# Actions
-		add_action( 'init',                           array( $this, 'init' ), 99 );
-		add_action( 'add_meta_boxes',                 array( $this, 'meta_boxes' ) );
-		add_action( 'wp_ajax_post_collection_search', array( $this, 'ajax_search' ) );
-		add_action( 'wp_ajax_post_collection_search_with_terms', array( $this, 'ajax_search_with_terms' ) );
-		add_action( 'load-post-new.php',              array( $this, 'enqueue_assets' ) );
-		add_action( 'load-post.php',                  array( $this, 'enqueue_assets' ) );
-		add_action( 'admin_enqueue_scripts',		  array( $this, 'admin_enqueue_assets' ) );
+		add_action( 'init',                           				array( $this, 'init' ), 99 );
+		add_action( 'add_meta_boxes',                 				array( $this, 'meta_boxes' ) );
+		add_action( 'wp_ajax_post_collection_search', 				array( $this, 'ajax_search' ) );
+		add_action( 'wp_ajax_post_collection_search_with_terms', 	array( $this, 'ajax_search_with_terms' ) );
+		add_action( 'load-post-new.php',              				array( $this, 'enqueue_assets' ) );
+		add_action( 'load-post.php',                  				array( $this, 'enqueue_assets' ) );
+		add_action( 'admin_enqueue_scripts',		  				array( $this, 'admin_enqueue_assets' ) );
 
 		require $this->plugin_path( 'src/template.php' );
 		require $this->plugin_path( 'src/widget.php' );
