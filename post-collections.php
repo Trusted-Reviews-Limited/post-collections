@@ -24,8 +24,8 @@ class Post_Collections {
 		add_action( 'load-post.php',                  array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_enqueue_scripts',		  array( $this, 'admin_enqueue_assets' ) );
 
-		require $this->plugin_path( 'template.php' );
-		require $this->plugin_path( 'widget.php' );
+		require $this->plugin_path( 'src/template.php' );
+		require $this->plugin_path( 'src/widget.php' );
 
 	}
 
