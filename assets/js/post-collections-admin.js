@@ -50,11 +50,14 @@ jQuery( function($) {
 				}
 			}
 		}).select2('val', []).on('select2-selecting', function(e) {
-			console.log(this);
-			console.log( $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val().indexOf( e.val ) );
+			var selectedItems = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val();
 			
-			if( $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val().indexOf( e.val ) == -1 ) {
-				$(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val( e.val );
+			if( selectedItems.indexOf( e.val ) == -1 ) {
+				if( selectedItems.substr( selectedItems.length -1 ) !== "," ) {
+					selectedItems = selectedItems + ",";
+				}
+
+				$(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val( selectedItems + e.val );
 			}
 			
 			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
