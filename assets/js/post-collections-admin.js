@@ -1,10 +1,8 @@
 jQuery( function($) {
 
-	$( 'document' ).ready( function() {
-		initSelect();
-	});
+	$( document ).ready( initSelect() );
 
-	$( 'document' ).on( 'widget-updated widget-added', function( event, widget ) {
+	$( document ).on( 'widget-added widget-updated', function( event, widget ) {
 		if( widget.context.outerHTML.indexOf( "collection_widget" ) ) {
 			initSelect();
 		}
@@ -45,11 +43,20 @@ jQuery( function($) {
 			},
 			allowClear: true,
 			initSelection: function (element, callback) {
-				if( $(element).data('value').length !== 0 ) {
-					callback( $(element).data('value') );
+				var selectedValues = $( element ).data( "value" );
+				
+				if( selectedValues && selectedValues.length !== 0 ) {
+					callback( selectedValues );
 				}
 			}
 		}).select2('val', []).on('select2-selecting', function(e) {
+			console.log(this);
+			console.log( $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val().indexOf( e.val ) );
+			
+			if( $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val().indexOf( e.val ) == -1 ) {
+				$(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val( e.val );
+			}
+			
 			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
 		});
 	}

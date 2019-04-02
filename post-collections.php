@@ -311,8 +311,7 @@ class Post_Collections {
 			'post-collections-admin',
 			$this->plugin_url( 'assets/js/post-collections-admin.js' ),
 			array( 'jquery' ),
-			$this->plugin_ver( 'assets/js/post-collections-admin.js' ),
-			true
+			$this->plugin_ver( 'assets/js/post-collections-admin.js' )
 		);
 
 	}
