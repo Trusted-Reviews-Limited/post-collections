@@ -310,7 +310,7 @@ class Post_Collections {
 		wp_enqueue_script(
 			'post-collections-admin',
 			$this->plugin_url( 'assets/js/post-collections-admin.js' ),
-			array( 'jquery' ),
+			array( 'jquery', 'select2' ),
 			$this->plugin_ver( 'assets/js/post-collections-admin.js' )
 		);
 
