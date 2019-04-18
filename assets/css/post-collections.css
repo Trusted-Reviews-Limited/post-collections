@@ -36,13 +36,12 @@
 
 #post-collection-list .item-remove {
 	position: absolute;
-	top: 11px;
-	right: 9px;
+	top: 15px;
+	right: 13px;
 	display: block;
-	background: url( 'xit.gif') 0 0 no-repeat;
+	background: url( '../../xit.gif') 0 0 no-repeat;
 	width: 10px;
 	height: 10px;
-	visibility: hidden;
 }
 
 .mobile #post-collection-list .item-remove,
