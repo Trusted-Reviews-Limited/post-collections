@@ -9,6 +9,10 @@ jQuery( function($) {
 	});
 
 	function initSelect() {
+		if ($('.js-post-collection-items-wrapper').length < 1) {
+			return;
+		}
+	
 		$('.js-post-collection-items-wrapper').select2({
 			multiple: true,
 			placeholder: "Search for an item",
