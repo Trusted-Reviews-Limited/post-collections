@@ -133,7 +133,7 @@ class Collection_Widget extends WP_Widget {
 
 		$extra_classes = [];
 		$title         = ( isset( $instance['title'] ) ? $instance['title'] : '' );
-		$title         = apply_filters( 'widget_title', $title );
+		$title         = apply_filters( 'widget_title', $title, $instance );
 		$hide_title    = ( isset( $instance['hide_title'] ) ? $instance['hide_title'] : false );
 		$layout        = ( isset( $instance['layout'] ) ? $instance['layout'] : 'single' );
 		$container     = ( isset( $instance['container'] ) ? $instance['container'] : 'default' );
