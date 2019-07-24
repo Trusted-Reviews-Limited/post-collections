@@ -210,6 +210,7 @@ class Collection_Widget extends WP_Widget {
 		$show_start_time = isset( $instance['show_start_time'] ) ? 'true' : 'false';
 		$show_content_type = isset( $instance['show_content_type'] ) ? 'true' : 'false';
 		$show_taxonomy_signpost = isset( $instance['show_taxonomy_signpost'] ) ? 'true' : 'false';
+		$hide_item_title = isset( $instance['hide_item_title'] ) ? 'true' : 'false';
 		$post_types = get_post_types( [
 			'public'   => true,
 			'_builtin' => true,
@@ -435,6 +436,14 @@ class Collection_Widget extends WP_Widget {
 			</label>
 		</p>
 
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'hide_item_title' ) ); ?>">
+				<input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'hide_item_title' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'hide_item_title' ) ); ?>"
+					<?php checked( $hide_item_title, 'true' ); ?> class="block-input">
+				Hide Item Title
+			</label>
+		</p>
+
 		<style>
 			.js-post-collection-items-wrapper,
 			.js-post-collection-items-wrapper .select2-input {
@@ -456,6 +465,7 @@ class Collection_Widget extends WP_Widget {
 		$new_instance['show_start_time'] = isset( $new_instance['show_start_time'] ) ? 'true' : null;
 		$new_instance['show_content_type'] = isset( $new_instance['show_content_type'] ) ? 'true' : null;
 		$new_instance['show_taxonomy_signpost'] = isset( $new_instance['show_taxonomy_signpost'] ) ? 'true' : null;
+		$new_instance['hide_item_title'] = isset( $new_instance['hide_item_title'] ) ? 'true' : null;
 
 		return $new_instance;
 	}
