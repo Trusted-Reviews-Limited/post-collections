@@ -54,13 +54,12 @@ jQuery( function($) {
 				}
 			}
 		}).on('select2:select', function(e) {
-			var selectElement = $(this).closest( ".widget-content" ).find( "select.js-post-collection-items-wrapper" );
-			
-			// $(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
+			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
+			var itemIDs = $( itemsInput ).val();
 
-			$( selectElement ).find( 'option' ).each( function() {
-				$( this ).attr( 'selected', 'selected' );
-			});
+			$( itemsInput ).val( ',' + itemIDs );
+
+			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
 		});
 	}
 
