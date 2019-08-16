@@ -20,15 +20,15 @@ jQuery( function($) {
 			ajax: {
 				url: ajaxurl,
 				dataType: 'json',
-				quietMillis: 250,
-				data: function (term, page) {
+				delay: 250,
+				data: function (params) {
 					return {
 						action: 'post_collection_search_with_terms',
-						search: term,
+						search: params.term,
 						filter: $(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).val(),
 					};
 				},
-				results: function (data, page) {
+				processResults: function (data, page) {
 					let myResults = [];
 					if (data.results) {
 						$.each(data.results, function (index, item) {
@@ -53,18 +53,14 @@ jQuery( function($) {
 					callback( selectedValues );
 				}
 			}
-		}).select2('val', []).on('select2-selecting', function(e) {
-			var selectedItems = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val();
+		}).on('select2:select', function(e) {
+			var selectElement = $(this).closest( ".widget-content" ).find( "select.js-post-collection-items-wrapper" );
 			
-			if( selectedItems.indexOf( e.val ) == -1 ) {
-				if( selectedItems.substr( selectedItems.length -1 ) !== "," ) {
-					selectedItems = selectedItems + ",";
-				}
+			// $(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
 
-				$(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val( selectedItems + e.val );
-			}
-			
-			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
+			$( selectElement ).find( 'option' ).each( function() {
+				$( this ).attr( 'selected', 'selected' );
+			});
 		});
 	}
 

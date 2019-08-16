@@ -275,10 +275,15 @@ class Collection_Widget extends WP_Widget {
 		</p>
 		<p>
 
-			<input type="hidden"
-				   class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>"
-				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>"
-				   data-value="<?php echo esc_attr( $selected_items_json ) ?>">
+			<select multiple
+					type="hidden"
+				   	class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>"
+				   	name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>"
+					data-value="<?php echo esc_attr( $selected_items_json ) ?>">
+					<?php foreach( json_decode( $selected_items ) as $item ) : ?>
+						<option selected="selected" value="<?php echo $item->id ?>"><?php echo $item->text ?></option>
+					<?php endforeach; ?>
+			</select>   
 		</p>
 
 		<?php if ( ! empty( self::LAYOUT_OPTIONS ) ) : ?>
