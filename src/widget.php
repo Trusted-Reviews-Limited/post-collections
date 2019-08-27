@@ -274,14 +274,14 @@ class Collection_Widget extends WP_Widget {
 		</p>
 		<p>
 			<?php
-				// die( var_dump( $selected_items ) );
 				$item_ids = array_filter( $selected_items, function( $item ) {
 					return $item['id'];
 				});
 			?>
 			<select multiple
 					style="width:100%"
-				   	class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>">
+					class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>">
+					<option></option>   
 					<?php foreach( $selected_items as $item ) : ?>
 						<option selected="selected" value="<?php echo $item['id'] ?>"><?php echo $item['text'] ?></option>
 					<?php endforeach; ?>

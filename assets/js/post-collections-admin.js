@@ -57,9 +57,9 @@ jQuery( function($) {
 			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
 			var itemIDs = $( itemsInput ).val();
 
-			$( itemsInput ).val( ',' + itemIDs );
+			$( itemsInput ).val( "," + itemIDs );
 
-			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
+			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop( "selectedIndex", 0 );
 		});
 	}
 
