@@ -12,15 +12,16 @@ jQuery( function($) {
 		if ($('.js-post-collection-items-wrapper').length < 1) {
 			return;
 		}
-	
+
 		$('.js-post-collection-items-wrapper').select2({
-			multiple: true,
 			placeholder: "Search for an item",
 			minimumInputLength: 1,
+			allowClear: true,
 			ajax: {
 				url: ajaxurl,
 				dataType: 'json',
 				delay: 250,
+				cache: true,
 				data: function (params) {
 					return {
 						action: 'post_collection_search_with_terms',
@@ -43,24 +44,16 @@ jQuery( function($) {
 						results: myResults
 					};
 				},
-				cache: true
 			},
-			allowClear: true,
-			initSelection: function (element, callback) {
-				var selectedValues = $( element ).data( "value" );
-				
-				if( selectedValues && selectedValues.length !== 0 ) {
-					callback( selectedValues );
-				}
-			}
 		}).on('select2:select', function(e) {
 			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
-			var itemIDs = $( itemsInput ).val();
-
-			$( itemsInput ).val( "," + itemIDs );
+			var inputVal = $( itemsInput ).val();
+			var itemIDs = inputVal.split( "," )
+			itemIDs.push( e.params.data.id );	
+			
+			$( itemsInput ).val( itemIDs.join() );
 
 			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop( "selectedIndex", 0 );
 		});
 	}
-
 });
