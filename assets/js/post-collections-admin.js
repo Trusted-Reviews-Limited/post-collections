@@ -17,6 +17,7 @@ jQuery( function($) {
 			placeholder: "Search for an item",
 			minimumInputLength: 1,
 			allowClear: true,
+			width: 400,
 			ajax: {
 				url: ajaxurl,
 				dataType: 'json',
