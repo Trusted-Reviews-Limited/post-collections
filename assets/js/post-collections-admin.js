@@ -61,10 +61,16 @@ jQuery( function($) {
 			}
 		});
 
-		// $('.select2-container').each(function(i, v) {
-		// 	if( $(v).next().hasClass( 'select2-container' ) ) {
-		// 		$(v).next().remove();
-		// 	}
-		// });
+		$('.select2-container').each(function(i, v) {
+			if( $(v).next().hasClass( 'select2-container' ) ) {
+				$(v).next().remove();
+			}
+		});
+
+		$('.select2-selection__rendered').each(function(i, v) {
+			if( !$(v).parent().hasClass( 'select2-selection' ) ) {
+				$(v).remove();
+			}
+		});
 	}
 });
