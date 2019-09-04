@@ -285,7 +285,7 @@ class Collection_Widget extends WP_Widget {
 					<?php foreach( $selected_items as $item ) : ?>
 						<option selected="selected" value="<?php echo $item['id'] ?>"><?php echo $item['text'] ?></option>
 					<?php endforeach; ?>
-			</select>
+			</select>  
 			<input type="hidden" 
 				   class="js-post-collection-items-input"
 				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>"
