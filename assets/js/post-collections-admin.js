@@ -47,13 +47,19 @@ jQuery( function($) {
 			},
 		}).on('select2:select', function(e) {
 			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
-			var inputVal = $( itemsInput ).val();
-			var itemIDs = inputVal.split( "," )
-			itemIDs.push( e.params.data.id );	
+			var inputVal = $( itemsInput ).val();	
 			
-			$( itemsInput ).val( itemIDs.join() );
+			$( itemsInput ).val( inputVal + "," + e.params.data.id );
 
 			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop( "selectedIndex", 0 );
+		}).on('select2:unselect', function(e) {
+			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
+			var inputVal = $( itemsInput ).val();	
+
+			if( inputVal.indexOf( e.params.data.id ) !== false ) {
+				inputVal = inputVal.replace( e.params.data.id, "" );
+				$( itemsInput ).val( inputVal.replace( ",,", "," ) );
+			}
 		});
 	}
 });
