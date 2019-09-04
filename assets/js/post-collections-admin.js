@@ -9,11 +9,11 @@ jQuery( function($) {
 	});
 
 	function initSelect() {
-		if ($('.js-post-collection-items-wrapper').length < 1) {
+		if ($('select.js-post-collection-items-wrapper').length < 1) {
 			return;
 		}
 
-		$('.js-post-collection-items-wrapper').select2({
+		$('select.js-post-collection-items-wrapper').select2({
 			placeholder: "Search for an item",
 			minimumInputLength: 1,
 			allowClear: true,
@@ -48,7 +48,6 @@ jQuery( function($) {
 		}).on('select2:select', function(e) {
 			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
 			var inputVal = $( itemsInput ).val();	
-			
 			$( itemsInput ).val( inputVal + "," + e.params.data.id );
 
 			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop( "selectedIndex", 0 );
@@ -61,5 +60,11 @@ jQuery( function($) {
 				$( itemsInput ).val( inputVal.replace( ",,", "," ) );
 			}
 		});
+
+		// $('.select2-container').each(function(i, v) {
+		// 	if( $(v).next().hasClass( 'select2-container' ) ) {
+		// 		$(v).next().remove();
+		// 	}
+		// });
 	}
 });

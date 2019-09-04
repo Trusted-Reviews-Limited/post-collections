@@ -273,11 +273,6 @@ class Collection_Widget extends WP_Widget {
 			<?php endif; ?>
 		</p>
 		<p>
-			<?php
-				$item_ids = array_filter( $selected_items, function( $item ) {
-					return $item['id'];
-				});
-			?>
 			<select multiple
 					style="width:100%"
 					class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>">
@@ -289,7 +284,7 @@ class Collection_Widget extends WP_Widget {
 			<input type="hidden" 
 				   class="js-post-collection-items-input"
 				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>"
-				   value="<?php echo esc_attr( implode( ',', array_map( function( $v ) { return $v['id']; }, $item_ids ) ) ) ?>"/>
+				   value="<?php echo esc_attr( implode( ',', array_map( function( $v ) { return $v['id']; }, $selected_items ) ) ) ?>"/>
 		</p>
 
 		<?php if ( ! empty( self::LAYOUT_OPTIONS ) ) : ?>
