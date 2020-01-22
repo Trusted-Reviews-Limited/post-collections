@@ -314,6 +314,13 @@ class Post_Collections {
 			$this->plugin_ver( 'assets/js/post-collections-admin.js' )
 		);
 
+		wp_enqueue_style(
+			'post-collections-admin',
+			$this->plugin_url( 'assets/css/post-collections-admin.css' ),
+			null,
+			$this->plugin_ver( 'assets/css/post-collections-admin.css' )
+		);
+
 	}
 
 	function plugin_url( $file = '' ) {

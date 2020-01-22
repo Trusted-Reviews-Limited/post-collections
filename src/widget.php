@@ -246,7 +246,6 @@ class Collection_Widget extends WP_Widget {
 				}
 			}
 		}
-		$selected_items_json = json_encode( $selected_items );
 
 		?>
 		<p>
@@ -274,11 +273,18 @@ class Collection_Widget extends WP_Widget {
 			<?php endif; ?>
 		</p>
 		<p>
-
-			<input type="hidden"
-				   class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>"
+			<select multiple
+					style="width:100%"
+					class="js-post-collection-items-wrapper js-post-collection-items-<?php echo esc_attr( $id ); ?>">
+					<option></option>   
+					<?php foreach( $selected_items as $item ) : ?>
+						<option selected="selected" value="<?php echo $item['id'] ?>"><?php echo $item['text'] ?></option>
+					<?php endforeach; ?>
+			</select>  
+			<input type="hidden" 
+				   class="js-post-collection-items-input"
 				   name="<?php echo esc_attr( $this->get_field_name( 'collection_items' ) ); ?>"
-				   data-value="<?php echo esc_attr( $selected_items_json ) ?>">
+				   value="<?php echo esc_attr( implode( ',', array_map( function( $v ) { return $v['id']; }, $selected_items ) ) ) ?>"/>
 		</p>
 
 		<?php if ( ! empty( self::LAYOUT_OPTIONS ) ) : ?>

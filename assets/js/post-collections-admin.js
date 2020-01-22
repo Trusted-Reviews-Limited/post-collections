@@ -9,26 +9,27 @@ jQuery( function($) {
 	});
 
 	function initSelect() {
-		if ($('.js-post-collection-items-wrapper').length < 1) {
+		if ($('select.js-post-collection-items-wrapper').length < 1) {
 			return;
 		}
-	
-		$('.js-post-collection-items-wrapper').select2({
-			multiple: true,
+
+		$('select.js-post-collection-items-wrapper').select2({
 			placeholder: "Search for an item",
 			minimumInputLength: 1,
+			allowClear: true,
 			ajax: {
 				url: ajaxurl,
 				dataType: 'json',
-				quietMillis: 250,
-				data: function (term, page) {
+				delay: 250,
+				cache: true,
+				data: function (params) {
 					return {
 						action: 'post_collection_search_with_terms',
-						search: term,
+						search: params.term,
 						filter: $(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).val(),
 					};
 				},
-				results: function (data, page) {
+				processResults: function (data, page) {
 					let myResults = [];
 					if (data.results) {
 						$.each(data.results, function (index, item) {
@@ -43,29 +44,33 @@ jQuery( function($) {
 						results: myResults
 					};
 				},
-				cache: true
 			},
-			allowClear: true,
-			initSelection: function (element, callback) {
-				var selectedValues = $( element ).data( "value" );
-				
-				if( selectedValues && selectedValues.length !== 0 ) {
-					callback( selectedValues );
-				}
-			}
-		}).select2('val', []).on('select2-selecting', function(e) {
-			var selectedItems = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val();
-			
-			if( selectedItems.indexOf( e.val ) == -1 ) {
-				if( selectedItems.substr( selectedItems.length -1 ) !== "," ) {
-					selectedItems = selectedItems + ",";
-				}
+		}).on('select2:select', function(e) {
+			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
+			var inputVal = $( itemsInput ).val();	
+			$( itemsInput ).val( inputVal + "," + e.params.data.id );
 
-				$(this).closest( ".widget-content" ).find( "input.js-post-collection-items-wrapper" ).val( selectedItems + e.val );
+			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop( "selectedIndex", 0 );
+		}).on('select2:unselect', function(e) {
+			var itemsInput = $(this).closest( ".widget-content" ).find( "input.js-post-collection-items-input" );
+			var inputVal = $( itemsInput ).val();	
+
+			if( inputVal.indexOf( e.params.data.id ) !== false ) {
+				inputVal = inputVal.replace( e.params.data.id, "" );
+				$( itemsInput ).val( inputVal.replace( ",,", "," ) );
 			}
-			
-			$(this).closest( ".widget-content" ).find( "select.post-collection-filter-by" ).prop('selectedIndex',0);
+		});
+
+		$('.select2-container').each(function(i, v) {
+			if( $(v).next().hasClass( 'select2-container' ) ) {
+				$(v).next().remove();
+			}
+		});
+
+		$('.select2-selection__rendered').each(function(i, v) {
+			if( !$(v).parent().hasClass( 'select2-selection' ) ) {
+				$(v).remove();
+			}
 		});
 	}
-
 });
