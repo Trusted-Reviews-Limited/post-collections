@@ -43,9 +43,9 @@ class Collection_Widget extends WP_Widget {
 			'label' => 'Filmstrip 5',
 			'class' => 'filmstrip-5 listing--filmstrip',
 		],
-		'sidebar'          => [
-			'label' => 'Sidebar',
-			'class' => 'listing--sidebar',
+		'recirculation'          => [
+			'label' => 'Recirculation',
+			'class' => 'listing--recirculation',
 		],
 	];
 
